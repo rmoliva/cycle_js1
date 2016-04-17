@@ -26,21 +26,13 @@ var Paginator = function (isolate_name, sources) {
   };
 
   var model = function (props$, actions) {
-    const propPage$ = props$
-      .map(props => props.page)
-      .first().concat(actions.page$);
-    const propPerPage$ = props$
-      .map(props => props.per_page)
-      .first();
-    const propTotal$ = props$
-      .map(props => props.total)
-      .first();
-    const propSize$ = props$
-      .map(props => props.size)
-      .first();
+    const propPage$ = props$.map(props => props.page).first();
+    const propPerPage$ = props$.map(props => props.per_page).first();
+    const propTotal$ = props$.map(props => props.total).first();
+    const propSize$ = props$.map(props => props.size).first();
 
     return Rx.Observable.combineLatest(
-      propPage$,
+      propPage$.concat(actions.page$),
       propPerPage$,
       propTotal$,
       propSize$,
@@ -60,32 +52,19 @@ var Paginator = function (isolate_name, sources) {
   var view = function (props$, value$) {
     return Rx.Observable.combineLatest(props$, value$,
       function (props, value) {
-        let prev_class = '';
-        let next_class ='';
-        let i;
-        let active_class;
+        let page_class = '';
         let page_links = [];
 
-        if (value.page === value.page_start) {
-          prev_class = '.disabled';
-        }
-        if (value.page === value.page_end) {
-          next_class = '.disabled';
-        }
+        page_class = (value.page === value.page_start) ? '.disabled' : '';
+        page_links.push(_pageLink(page_class, 1, 'Prev'));
 
-        page_links.push(_pageLink(prev_class, 1, 'Prev'));
-
-        for (i = value.page_start; i <= value.page_end; i++) {
-          if (i.toString() === value.page.toString()) {
-            active_class = '.active';
-          } else {
-            active_class = '';
-          }
-
-          page_links.push(_pageLink(active_class, i, i));
+        for (let i = value.page_start; i <= value.page_end; i++) {
+          page_class = (i.toString() === value.page.toString()) ? '.active' : '';
+          page_links.push(_pageLink(page_class, i, i));
         }
 
-        page_links.push(_pageLink(next_class, value.page_end, "Next"));
+        page_class = (value.page === value.page_end) ? '.disabled' : '';
+        page_links.push(_pageLink(page_class, value.page_end, "Next"));
 
         return h('nav', [
           h('ul.pagination', page_links)
