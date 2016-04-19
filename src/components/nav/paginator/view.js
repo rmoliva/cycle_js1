@@ -2,7 +2,6 @@
 import Rx from 'rx';
 import {h} from '@cycle/dom';
 
-
 var _pageLink = function (li_class, page, text) {
   return h('li'+li_class, [
     h('a.page-link', {
@@ -31,7 +30,7 @@ var view = function (props$, value$) {
 
       return h('nav', [
         h('ul.pagination', page_links)
-      ])
+      ]);
     }
   );
 };

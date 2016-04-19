@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
 
   entry: {
     test: [path.join(__dirname, 'webpack.test.bootstrap.js')]

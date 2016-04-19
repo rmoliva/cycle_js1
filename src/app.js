@@ -7,7 +7,8 @@ import Rx                   from 'rx';
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 import LabeledSlider from './components/labeled_slider';
 import Paginator from './components/nav/paginator';
-
+import FormLabel from './components/layout/form_label';
+import Slider from './components/form/slider';
 
 // // we are pulling in our css files here for webpack to compile
 // require("!style!css!styles/pure-min.css");
@@ -70,51 +71,77 @@ function model(actions) {
 };
 
 const mainApp = function (sources) {
-  const weightProps$ = Rx.Observable.of({
-     label: 'Weight', unit: 'kg', min: 40, initial: 70, max: 150
+  // const weightProps$ = Rx.Observable.of({
+  //    label: 'Weight', unit: 'kg', min: 40, initial: 70, max: 150
+  //  });
+  //  const heightProps$ = Rx.Observable.of({
+  //    label: 'Height', unit: 'cm', min: 140, initial: 170, max: 210
+  //  });
+  //  const paginatorProps$ = Rx.Observable.of({
+  //    page: 1, per_page: 30, total: 130, size: 5
+  //  });
+   const labelProps$ = Rx.Observable.of({
+     text: "Esto es una <b>etiqueta</b>",
+     error: false,
+     children: [
+       Slider("slider").component({
+         DOM: sources.DOM,
+         props$: Rx.Observable.of({
+           min: 40, value: 70, max: 150
+         })
+       }),
+       Slider("slider2").component({
+         DOM: sources.DOM,
+         props$: Rx.Observable.of({
+           min: 40, value: 70, max: 150
+         })
+       })
+     ]     
    });
-   const heightProps$ = Rx.Observable.of({
-     label: 'Height', unit: 'cm', min: 140, initial: 170, max: 210
-   });
-   const paginatorProps$ = Rx.Observable.of({
-     page: 1, per_page: 30, total: 130, size: 5
-   });
+  //  const sliderProps$ = Rx.Observable.of({
+  //    min: 40, value: 70, max: 150
+  //  });
+   //
+  //  const weightSources = {DOM: sources.DOM, props$: weightProps$};
+  //  const heightSources = {DOM: sources.DOM, props$: heightProps$};
+  //  const paginatorSources = {DOM: sources.DOM, props$: paginatorProps$};
+   const labelSources = {DOM: sources.DOM, props$: labelProps$};
+  //  const sliderSources = {DOM: sources.DOM, props$: sliderProps$};
+   //
+  //  const weightSlider = LabeledSlider("weight").component(weightSources);
+  //  const heightSlider = LabeledSlider("height").component(heightSources);
+  //  const paginatorSlider = Paginator("paginator").component(paginatorSources);
+   const label = FormLabel("label").component(labelSources);
+  //  const slider = Slider("slider").component(sliderSources);
+   //
+  //  const weightVTree$ = weightSlider.DOM;
+  //  const weightValue$ = weightSlider.value$;
+   //
+  //  const heightVTree$ = heightSlider.DOM;
+  //  const heightValue$ = heightSlider.value$;
+   //
+  //  const paginatorVTree$ = paginatorSlider.DOM;
+  //  const paginatorValue$ = paginatorSlider.value$;
+   //
+   const labelVTree$ = label.DOM;
+   // const sliderVTree$ = slider.DOM;
 
-   const weightSources = {DOM: sources.DOM, props$: weightProps$};
-   const heightSources = {DOM: sources.DOM, props$: heightProps$};
-   const paginatorSources = {DOM: sources.DOM, props$: paginatorProps$};
-
-   const weightSlider = LabeledSlider("weight").component(weightSources);
-   const heightSlider = LabeledSlider("height").component(heightSources);
-   const paginatorSlider = Paginator("paginator").component(paginatorSources);
-
-   const weightVTree$ = weightSlider.DOM;
-   const weightValue$ = weightSlider.value$;
-
-   const heightVTree$ = heightSlider.DOM;
-   const heightValue$ = heightSlider.value$;
-
-   const paginatorVTree$ = paginatorSlider.DOM;
-   const paginatorValue$ = paginatorSlider.value$;
-
-   const bmi$ = Rx.Observable.combineLatest(weightValue$, heightValue$,
-      (weight, height) => {
-        const heightMeters = height * 0.01;
-        const bmi = Math.round(weight / (heightMeters * heightMeters));
-        return bmi;
-      }
-    );
+  //  const bmi$ = Rx.Observable.combineLatest(weightValue$, heightValue$,
+  //     (weight, height) => {
+  //       const heightMeters = height * 0.01;
+  //       const bmi = Math.round(weight / (heightMeters * heightMeters));
+  //       return bmi;
+  //     }
+  //   );
 
   return {
-    DOM: bmi$.combineLatest(weightVTree$, heightVTree$, paginatorVTree$,
-      (bmi, weightVTree, heightVTree, paginatorVTree) =>
-        div([
-          weightVTree,
-          heightVTree,
-          h2('BMI is ' + bmi),
-          paginatorVTree
+    // DOM: bmi$.combineLatest(weightVTree$, heightVTree$, paginatorVTree$, labelVTree$, sliderVTree$,
+    DOM: Rx.Observable.combineLatest(labelVTree$,
+      function(labelVTree) {
+        return  div([
+          labelVTree
         ])
-      )
+      })
     };
 };
 
