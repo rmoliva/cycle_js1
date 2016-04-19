@@ -6,7 +6,7 @@ import Rx                   from 'rx';
 // import Main                 from './main'
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 import LabeledSlider from './components/labeled_slider';
-import Paginator from './components/paginator';
+import Paginator from './components/nav/paginator';
 
 
 // // we are pulling in our css files here for webpack to compile
