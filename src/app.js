@@ -32,9 +32,15 @@ import Slider from './components/form/slider';
 //
 // };
 
-debugger;
+// debugger;
 
-const debug = (scope) => (value) => console.log('-> ' + scope + ': ' + value);
+const _debug = function(scope) {
+  return function(value) {
+    console.group(scope);
+    console.log(value);
+    console.groupEnd(scope);
+  };
+};
 
 function calculateBMI(weight, height) {
   const heightMeters = height * 0.01;
@@ -70,6 +76,28 @@ function model(actions) {
   );
 };
 
+const test$ = Rx.Observable.of({
+  children: [{
+    value$: Rx.Observable.from([1,2,3,4])
+  }, {
+    value$: Rx.Observable.from([1,2,3,4])
+  }]
+});
+
+const propTest$ = test$.do(
+  _debug('test')
+).pluck(
+  'children'
+).do(
+  _debug('test.children')
+).map(function(value) {
+  _debug('test.children.value')(value)
+  return Rx.Observable.from(value)
+})
+
+propTest$.subscribe(_debug('subscribe'));
+
+
 const mainApp = function (sources) {
   // const weightProps$ = Rx.Observable.of({
   //    label: 'Weight', unit: 'kg', min: 40, initial: 70, max: 150
@@ -83,21 +111,19 @@ const mainApp = function (sources) {
    const labelProps$ = Rx.Observable.of({
      text: "Esto es una <b>etiqueta</b>",
      error: false,
-     children: [
-       Slider("slider").component({
-         DOM: sources.DOM,
-         props$: Rx.Observable.of({
-           min: 40, value: 70, max: 150
-         })
-       }),
-       Slider("slider2").component({
-         DOM: sources.DOM,
-         props$: Rx.Observable.of({
-           min: 40, value: 70, max: 150
-         })
+     children: [Slider("slider1").component({
+       DOM: sources.DOM,
+       props$: Rx.Observable.of({
+         min: 40, value: 70, max: 150
        })
-     ]     
+     }), Slider("slider2").component({
+       DOM: sources.DOM,
+       props$: Rx.Observable.of({
+         min: 40, value: 70, max: 150
+       })
+     })]
    });
+
   //  const sliderProps$ = Rx.Observable.of({
   //    min: 40, value: 70, max: 150
   //  });
@@ -135,7 +161,7 @@ const mainApp = function (sources) {
   //   );
 
   return {
-    // DOM: bmi$.combineLatest(weightVTree$, heightVTree$, paginatorVTree$, labelVTree$, sliderVTree$,
+    //  DOM: bmi$.combineLatest(weightVTree$, heightVTree$, paginatorVTree$, labelVTree$, sliderVTree$,
     DOM: Rx.Observable.combineLatest(labelVTree$,
       function(labelVTree) {
         return  div([

@@ -34,15 +34,50 @@ var FormLabel = function (isolate_name, sources) {
     );
   };
 
-  var view = function (props$, value$) {
-    const children$ = props$.map(props => props.children).map(child => child.DOM);
+  const _debug = function(scope) {
+    return function(value) {
+      console.group(scope);
+      console.log(value);
+      console.groupEnd(scope);
+    };
+  };
 
-    return Rx.Observable.combineLatest(props$, value$, children$,
-      function (props, value, children) {
-        debugger;
+  var view = function (props$, value$) {
+    const propChildren$ = props$.do(
+      _debug('props')
+    ).pluck(
+      'children'
+    ).do(
+      _debug('props.children')
+    ).map(function(value) {
+      _debug('props.children.value')(value)
+      return Rx.Observable.from(value)
+    }).do(
+      _debug('flatMap')
+    )
+
+    const dom$ = propChildren$.pluck('DOM').do(
+      _debug('child.DOM')
+    );
+
+  // ).do(
+  //     _debug('props.children')
+  //   ).map(function(child) {
+  //     _debug('child')(child);
+  //     return child.DOM;
+  //   }).do(
+  //     _debug('child.DOM')
+  //   );
+
+ // propChildren$.do(val => console.log(val));
+
+    return dom$.combineLatest(props$, value$,
+      function (children, value, props) {
+        // debugger;
         const class_error = value.error ? 'error' : '';
         return h('div.field' + class_error, [
           h('label', { innerHTML: value.text }),
+          children
         ])
       }
     );
