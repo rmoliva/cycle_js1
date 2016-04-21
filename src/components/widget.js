@@ -1,9 +1,10 @@
 
 import isolate from '@cycle/isolate';
 
+
 var Widget = function(component) {
   return function(isolate_name) {
-    var main = function(sources) {
+    var _main = function(sources) {
       const context = component(isolate_name, sources);
       const value$ = context.model(sources.props$, context.intent(sources));
       const sinks = {
@@ -14,7 +15,7 @@ var Widget = function(component) {
     };
 
     return {
-      component: isolate(main, isolate_name)
+      component: isolate(_main, isolate_name)
     };
   };
 };

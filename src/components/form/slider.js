@@ -3,7 +3,7 @@ import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 
 import Widget from '../widget';
 
-var Slider = function (isolate_name, sources) {
+var Slider = function (isolate_name, config) {
 
   var intent = function(sources) {
     return sources.DOM
