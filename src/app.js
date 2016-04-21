@@ -110,18 +110,7 @@ const mainApp = function (sources) {
   //  });
    const labelProps$ = Rx.Observable.of({
      text: "Esto es una <b>etiqueta</b>",
-     error: false,
-     children: [Slider("slider1").component({
-       DOM: sources.DOM,
-       props$: Rx.Observable.of({
-         min: 40, value: 70, max: 150
-       })
-     }), Slider("slider2").component({
-       DOM: sources.DOM,
-       props$: Rx.Observable.of({
-         min: 40, value: 70, max: 150
-       })
-     })]
+     error: false
    });
 
   //  const sliderProps$ = Rx.Observable.of({

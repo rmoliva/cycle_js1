@@ -1,4 +1,5 @@
 import Rx from 'rx';
+import R from 'ramda';
 import {h} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
@@ -13,6 +14,19 @@ var FormLabel = function (isolate_name, sources) {
     })
   });
 */
+
+  const children = [Slider("slider1").component({
+    DOM: sources.DOM,
+    props$: Rx.Observable.of({
+      min: 40, value: 70, max: 150
+    })
+  }), Slider("slider2").component({
+    DOM: sources.DOM,
+    props$: Rx.Observable.of({
+      min: 40, value: 70, max: 150
+    })
+  })];
+
   var intent = function (sources) {
     return {
     };
@@ -43,22 +57,22 @@ var FormLabel = function (isolate_name, sources) {
   };
 
   var view = function (props$, value$) {
-    const propChildren$ = props$.do(
-      _debug('props')
-    ).pluck(
-      'children'
-    ).do(
-      _debug('props.children')
-    ).map(function(value) {
-      _debug('props.children.value')(value)
-      return Rx.Observable.from(value)
-    }).do(
-      _debug('flatMap')
-    )
+    // const propChildren$ = props$.do(
+    //   _debug('props')
+    // ).pluck(
+    //   'children'
+    // ).do(
+    //   _debug('props.children')
+    // ).map(function(value) {
+    //   _debug('props.children.value')(value)
+    //   return Rx.Observable.from(value)
+    // }).do(
+    //   _debug('flatMap')
+    // )
 
-    const dom$ = propChildren$.pluck('DOM').do(
-      _debug('child.DOM')
-    );
+    // const dom$ = propChildren$.pluck('DOM').do(
+    //   _debug('child.DOM')
+    // );
 
   // ).do(
   //     _debug('props.children')
@@ -71,13 +85,29 @@ var FormLabel = function (isolate_name, sources) {
 
  // propChildren$.do(val => console.log(val));
 
-    return dom$.combineLatest(props$, value$,
-      function (children, value, props) {
-        // debugger;
+ debugger;
+
+
+    var doms = R.map(function(a) {return a.DOM;})(children);
+    var obs = R.concat([props$, value$],doms);
+
+    // const dom$ = R.map((child) => child.DOM, children);
+    // const obs$ = props$.merge(value$);
+    //
+    // for(let i = 0; i < children.length; i++) {
+    //   obs$.merge(children[i]);
+    // }
+
+    return Rx.Observable.combineLatest(
+      obs,
+      function () {
+        _debug("combine")(arguments);
+        var props = arguments[1];
+        var value = arguments[1];
         const class_error = value.error ? 'error' : '';
         return h('div.field' + class_error, [
           h('label', { innerHTML: value.text }),
-          children
+          R.slice(2, Infinity, arguments)
         ])
       }
     );
