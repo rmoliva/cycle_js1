@@ -8,34 +8,40 @@ import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 import Component from './components/component';
 
 const mainApp = function (sources) {
+  const timer$ = Rx.Observable.timer(100, 100).take(150);
+
+  const props$ = timer$.map(function(value) {
+    return {
+      min: 40, value: value, max: 150
+    };
+  });
+
   const settings = {
     type: 'FormLabel',
     id: "main",
     children: [{
       type: 'Slider',
       id: "slider1",
-      props: {
-        min: 40, value: 90, max: 150
-      }
+      props$: props$
     }, {
       type: 'FormLabel',
       id: "label",
       children: [{
         type: 'Slider',
         id: "slider2",
-        props: {
+        props$: Rx.Observable.of({
           min: 40, value: 70, max: 150
-        }
+        })
       }],
-      props: {
+      props$: Rx.Observable.of({
         text: "Esto es la segunda <i>etiqueta</i>",
         error: false
-      }
+      })
     }],
-    props: {
+    props$: Rx.Observable.of({
       text: "Esto es una <b>etiqueta</b>",
       error: false
-    }
+    })
   };
   const mainComponent = Component(settings, sources);
   const mainEl = mainComponent.findId('main');

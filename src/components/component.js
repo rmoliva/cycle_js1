@@ -17,12 +17,13 @@ var _widget = function(settings) {
   const component = settings.component;
   const id = settings.id;
   const sources = settings.sources;
-  sources.props$ = Rx.Observable.of(settings.props);
+  sources.props$ = settings.props$;
 
   var _main = function(passed_sources) {
     const context = component.creator(settings);
     const intent = context.intent(passed_sources);
     const value$ = context.model(passed_sources.props$, intent);
+
     const sinks = {
       DOM: context.view(passed_sources.props$, value$),
       value$: value$,

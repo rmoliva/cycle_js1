@@ -10,8 +10,7 @@ var _creator = function(settings) {
   };
 
   var model = function(props$, actions$) {
-    const propValue$ = props$.map(props => props.value).first();
-
+    const propValue$ = props$.map(props => props.value);
     return Rx.Observable.combineLatest(
       propValue$.concat(actions$),
       function(value) {
