@@ -1,11 +1,9 @@
 import Rx from 'rx';
 import R from 'ramda';
 import {h} from '@cycle/dom';
-import isolate from '@cycle/isolate';
-import Widget from '../widget'
 // import Slider from '../form/slider'
 
-var FormLabel = function (settings) {
+var _creator = function (settings) {
   var intent = function (sources) {
     return {
     };
@@ -36,12 +34,12 @@ var FormLabel = function (settings) {
   };
 
   var view = function (props$, value$) {
-    var doms = R.map(function(a) {return a.DOM;})(settings.children);
+    var doms = R.map(function(a) {return a.sinks.DOM;})(settings.children);
     var obs = R.concat([props$, value$],doms);
     return Rx.Observable.combineLatest(
       obs,
       function () {
-        var props = arguments[1];
+        var props = arguments[0];
         var value = arguments[1];
         const class_error = value.error ? 'error' : '';
         return h('div.field' + class_error, [
@@ -58,4 +56,11 @@ var FormLabel = function (settings) {
   };
 };
 
-export default FormLabel;
+const FormLabel = function() {
+  return {
+    creator: _creator,
+    typename: 'FormLabel'
+  };
+};
+
+export default FormLabel();

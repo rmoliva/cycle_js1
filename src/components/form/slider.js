@@ -1,16 +1,12 @@
 import Rx from 'rx';
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 
-import Widget from '../widget';
-
-var Slider = function (settings) {
-
+var _creator = function(settings) {
   var intent = function(sources) {
     return sources.DOM
       .select('.slider')
       .events('input')
       .map(ev => ev.target.value)
-      .do(data => console.log(data));
   };
 
   var model = function(props$, actions$) {
@@ -48,4 +44,11 @@ var Slider = function (settings) {
   };
 };
 
-export default Slider;
+var Slider = function() {
+  return {
+    creator: _creator,
+    typename: 'Slider'
+  };
+};
+
+export default Slider();

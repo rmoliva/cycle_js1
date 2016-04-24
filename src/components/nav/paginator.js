@@ -1,4 +1,3 @@
-import Widget from '../widget';
 import intent from './paginator/intent'
 import model from './paginator/model'
 import view from './paginator/view'
@@ -12,4 +11,4 @@ var Paginator = function (isolate_name, sources) {
   };
 };
 
-export default Widget(Paginator);
+export default Paginator();

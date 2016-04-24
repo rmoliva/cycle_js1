@@ -5,57 +5,46 @@ import isolate                from '@cycle/isolate';
 import Rx                   from 'rx';
 // import Main                 from './main'
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
-import Widget from './components/widget';
-import FormLabel from './components/layout/form_label';
-import Slider from './components/form/slider';
+import Component from './components/component';
 
 const mainApp = function (sources) {
-  debugger;
-
-  const slider1 = Widget({
-    component: Slider,
-    name: "slider1",
-    sources: sources,
-    props: {
-      min: 40, value: 90, max: 150
-    }
-  });
-
-  const slider2 = Widget({
-    component: Slider,
-    name: "slider2",
-    sources: sources,
-    props: {
-      min: 40, value: 70, max: 150
-    }
-  });
-
-  const label2 = Widget({
-    component: FormLabel,
-    name: "label",
-    children: [slider2],
-    sources: sources,
-    props: {
-      text: "Esto es la segunda <i>etiqueta</i>",
-      error: false
-    }
-  });
-
-  const mainComponent = Widget({
-    component: FormLabel,
-    name: "main",
-    children: [slider1, label2],
-    sources: sources,
+  const settings = {
+    type: 'FormLabel',
+    id: "main",
+    children: [{
+      type: 'Slider',
+      id: "slider1",
+      props: {
+        min: 40, value: 90, max: 150
+      }
+    }, {
+      type: 'FormLabel',
+      id: "label",
+      children: [{
+        type: 'Slider',
+        id: "slider2",
+        props: {
+          min: 40, value: 70, max: 150
+        }
+      }],
+      props: {
+        text: "Esto es la segunda <i>etiqueta</i>",
+        error: false
+      }
+    }],
     props: {
       text: "Esto es una <b>etiqueta</b>",
       error: false
     }
-  });
+  };
+  const mainComponent = Component(settings, sources);
+  const mainEl = mainComponent.findId('main');
+  const mainDom = mainEl.sinks.DOM;
 
   return {
     //  DOM: bmi$.combineLatest(weightVTree$, heightVTree$, paginatorVTree$, labelVTree$, sliderVTree$,
     DOM: Rx.Observable.combineLatest(
-      mainComponent.DOM,
+      mainDom,
       function(labelVTree) {
         return  div([
           labelVTree
