@@ -3,13 +3,14 @@ import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 
 import Widget from '../widget';
 
-var Slider = function (isolate_name, config) {
+var Slider = function (settings) {
 
   var intent = function(sources) {
     return sources.DOM
       .select('.slider')
       .events('input')
-      .map(ev => ev.target.value);
+      .map(ev => ev.target.value)
+      .do(data => console.log(data));
   };
 
   var model = function(props$, actions$) {
@@ -47,4 +48,4 @@ var Slider = function (isolate_name, config) {
   };
 };
 
-export default Widget(Slider);
+export default Slider;

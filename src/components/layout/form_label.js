@@ -5,7 +5,7 @@ import isolate from '@cycle/isolate';
 import Widget from '../widget'
 // import Slider from '../form/slider'
 
-var FormLabel = function (isolate_name, config) {
+var FormLabel = function (settings) {
   var intent = function (sources) {
     return {
     };
@@ -36,7 +36,7 @@ var FormLabel = function (isolate_name, config) {
   };
 
   var view = function (props$, value$) {
-    var doms = R.map(function(a) {return a.DOM;})(config.children);
+    var doms = R.map(function(a) {return a.DOM;})(settings.children);
     var obs = R.concat([props$, value$],doms);
     return Rx.Observable.combineLatest(
       obs,
@@ -58,4 +58,4 @@ var FormLabel = function (isolate_name, config) {
   };
 };
 
-export default Widget(FormLabel);
+export default FormLabel;

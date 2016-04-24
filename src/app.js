@@ -5,42 +5,51 @@ import isolate                from '@cycle/isolate';
 import Rx                   from 'rx';
 // import Main                 from './main'
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
-import LabeledSlider from './components/labeled_slider';
-import Paginator from './components/nav/paginator';
+import Widget from './components/widget';
 import FormLabel from './components/layout/form_label';
 import Slider from './components/form/slider';
 
 const mainApp = function (sources) {
-  const slider1 = Slider("slider1").component({
-    DOM: sources.DOM,
-    props$: Rx.Observable.of({
-      min: 40, value: 70, max: 150
-    })
-  });
+  debugger;
 
-  const slider2 = Slider("slider2").component({
-    DOM: sources.DOM,
-    props$: Rx.Observable.of({
+  const slider1 = Widget({
+    component: Slider,
+    name: "slider1",
+    sources: sources,
+    props: {
       min: 40, value: 90, max: 150
-    })
+    }
   });
 
-  const label2 = FormLabel("label").component({
-    DOM: sources.DOM,
-    props$: Rx.Observable.of({
+  const slider2 = Widget({
+    component: Slider,
+    name: "slider2",
+    sources: sources,
+    props: {
+      min: 40, value: 70, max: 150
+    }
+  });
+
+  const label2 = Widget({
+    component: FormLabel,
+    name: "label",
+    children: [slider2],
+    sources: sources,
+    props: {
       text: "Esto es la segunda <i>etiqueta</i>",
       error: false
-    }),
-    children: [slider2]
+    }
   });
 
-  const mainComponent = FormLabel("label").component({
-    DOM: sources.DOM,
-    props$: Rx.Observable.of({
+  const mainComponent = Widget({
+    component: FormLabel,
+    name: "main",
+    children: [slider1, label2],
+    sources: sources,
+    props: {
       text: "Esto es una <b>etiqueta</b>",
       error: false
-    }),
-    children: [slider1, label2]
+    }
   });
 
   return {

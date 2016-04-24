@@ -3,7 +3,7 @@ import isolate                from '@cycle/isolate';
 import {div, input, span} from '@cycle/dom';
 
 
-var LabeledSlider = function(isolate_name, sources) {
+var LabeledSlider = function(settings) {
   var intent = function(sources) {
     return sources.DOM
       .select('.slider')
