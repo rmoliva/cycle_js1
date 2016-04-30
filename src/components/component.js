@@ -2,9 +2,12 @@ import R from 'ramda';
 import isolate from '@cycle/isolate';
 import FormLabel from './layout/form_label';
 import Slider from './form/slider';
+import Table from './collections/table';
 
 var _componentList = [
-  FormLabel, Slider
+  FormLabel,
+  Slider,
+  Table
 ];
 
 var _getWidgetByTypename = function(type) {
@@ -36,8 +39,8 @@ var _widget = function(settings) {
 
 
 var Component = function(settings, sources) {
-
   let new_children;
+
   settings.component = _getWidgetByTypename(
     settings.type
   );

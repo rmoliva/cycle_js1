@@ -6,6 +6,7 @@ import Rx                   from 'rx';
 // import Main                 from './main'
 import {h, div, input, h2, span, makeDOMDriver} from '@cycle/dom';
 import Component from './components/component';
+import Services from './services/main';
 
 const mainApp = function (sources) {
   const timer$ = Rx.Observable.timer(100, 100).take(150);
@@ -16,13 +17,59 @@ const mainApp = function (sources) {
     };
   });
 
+  const tablePropsCols$ = Rx.Observable.of([{
+    index: "id",
+    title: "Id"
+  }, {
+    index: "name",
+    title: "Name"
+  }, {
+    index: "email",
+    title: "Email"
+  }]);
+
+  const userServices$ = Rx.Observable.fromPromise(
+    sources.Services.users.index()
+  );
+
+  // const tablePropsRows$ = Rx.Observable.of([{
+  //   id: 1,
+  //   name: "Pepe Lopez",
+  //   email: "plopez@gmail.com"
+  // }, {
+  //   id: 2,
+  //   name: "Juan Sanchez",
+  //   email: "jsancgez@msn.com"
+  // }, {
+  //   id: 3,
+  //   name: "Sergio Vazquez",
+  //   email: "svazquez@gmail.com"
+  // }]);
+
+  const tableProps$ = Rx.Observable.combineLatest(
+    tablePropsCols$,
+    userServices$,
+    function(cols, user_data) {
+      return {
+        columns: cols,
+        rows: user_data.records
+      };
+    }
+  );
+
   const settings = {
     type: 'FormLabel',
     id: "main",
     children: [{
+      type: 'Table',
+      id: "table1",
+      props$: tableProps$
+    },{
       type: 'Slider',
       id: "slider1",
-      props$: props$
+      props$: Rx.Observable.of({
+        min: 40, value: 90, max: 150
+      })
     }, {
       type: 'FormLabel',
       id: "label",
@@ -61,6 +108,7 @@ const mainApp = function (sources) {
 
 const sources = {
   DOM: makeDOMDriver('#application'),
+  Services: Services()
 };
 
 Cycle.run(mainApp, sources);
